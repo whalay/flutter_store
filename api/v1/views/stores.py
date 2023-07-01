@@ -5,8 +5,10 @@ from models.store import Store
 from models import storage
 from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
+from flask_login import current_user,  login_required
 
 @app_views.route('/stores', methods=['GET'], strict_slashes=False)
+@login_required
 def get_stores():
     """
     Retrieves the list of all product objects
@@ -41,5 +43,22 @@ def post_store():
 
     data = request.get_json()
     instance = Store(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
+
+@app_views.route('/stores', methods=['POST'], strict_slashes=False)
+@login_required
+def post_userstore():
+    """
+    Creates a product
+    """
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    if 'store_name' not in request.get_json():
+        abort(400, description="Missing name")
+
+    data = request.get_json()
+    instance = Store(**data, owner_id = current_user.id)
     instance.save()
     return make_response(jsonify(instance.to_dict()), 201)

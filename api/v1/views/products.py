@@ -2,6 +2,7 @@
 """ objects that handle all default RestFul API actions for Users """
 from models.user import User
 from models.store import Store
+from models.category import Category
 from models.product import Product
 from models import storage
 from api.v1.views import app_views
@@ -28,6 +29,36 @@ def get_byproduct(product_id):
 
     return jsonify(product.to_dict())
 
+
+
+
+@app_views.route('/products/categories/<category_id>', methods=['GET'])
+def get_product_by_products_category(category_id):
+    # Find the category by ID
+    category = storage.get(Category, category_id)
+
+    if not category:
+        return jsonify({'message': 'Category not found'}), 404
+
+    # Retrieve products associated with the category
+    products = storage.all(Product)
+    matching_products = []
+
+    for prod in products.values():
+        if prod.category_id == category_id:
+            matching_products.append({
+                'product_id': prod.id,
+                'product_name': prod.product_name,
+                'price': prod.price,
+                'description': prod.description,
+                'category_name': category.name
+                # Include additional fields if necessary
+            })
+
+    if not matching_products:
+        return jsonify({'message': 'No products found for the category'}), 404
+
+    return jsonify(matching_products), 200
 
 @app_views.route('/stores/<store_id>/products', methods=['POST'], strict_slashes=False)
 def add_product(store_id):

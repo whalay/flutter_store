@@ -44,7 +44,7 @@ def login():
 
         user_dict = user.to_dict()
         response = make_response(jsonify({'message': 'Login successful',
-                                          'user': user_dict}), 200)
+                                          'user': user_dict, 'token': token}), 200)
         response.set_cookie('token', token, httponly=False)
         return response
     else:
