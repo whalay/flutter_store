@@ -7,6 +7,7 @@ from models.product import Product
 from models import storage
 from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
+from flask_login import login_required
 
 @app_views.route('/products', methods=['GET'], strict_slashes=False)
 def get_products():
@@ -61,6 +62,7 @@ def get_product_by_products_category(category_id):
     return jsonify(matching_products), 200
 
 @app_views.route('/stores/<store_id>/products', methods=['POST'], strict_slashes=False)
+@login_required
 def add_product(store_id):
     """
     Creates a product for a store
@@ -86,7 +88,7 @@ def add_product(store_id):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@app_views.route('/stores/<store_id>/products/<product_id>', methods=['GET'])
+@app_views.route('/stores/<store_id>/product/<product_id>', methods=['GET'])
 def get_product(store_id, product_id):
     store = storage.get(Store, store_id)
     if not store:
@@ -94,6 +96,7 @@ def get_product(store_id, product_id):
 
     products = storage.all(Product)
     product = None
+
 
     for prod in products.values():
         if prod.store_id == store_id and prod.id == product_id:
@@ -117,7 +120,29 @@ def get_product(store_id, product_id):
     #return jsonify(product.to_dict()), 200
 
 @app_views.route('/stores/<store_id>/products/', methods=['GET'])
+@login_required
 def get_store_products(store_id):
+    store = storage.get(Store, store_id)
+    if not store:
+        return jsonify({'message': 'Store not found'}), 404
+
+    products = storage.all(Product)
+    list_products = []
+
+    for prod in products.values():
+        if prod.store_id == store_id:
+            list_products.append(prod.to_dict())
+
+    if not list_products:
+        return jsonify({'message': 'Product not found'}), 404
+
+    return jsonify(list_products)
+
+
+
+@app_views.route('/stores/<store_id>/p/', methods=['GET'])
+@login_required
+def get_store_p(store_id):
     store = storage.get(Store, store_id)
     if not store:
         return jsonify({'message': 'Store not found'}), 404

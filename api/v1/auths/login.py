@@ -37,15 +37,15 @@ def login():
 
     if user:
         login_user(user)
-        token = jwt.encode(
+        """token = jwt.encode(
             {'user_id': user.id},
             current_app.config['SECRET_KEY'],
-            algorithm='HS256')
+            algorithm='HS256')"""
 
         user_dict = user.to_dict()
         response = make_response(jsonify({'message': 'Login successful',
-                                          'user': user_dict, 'token': token}), 200)
-        response.set_cookie('token', token, httponly=False)
+                                          'user': user_dict}), 200)
+        """response.set_cookie('token', token, httponly=False)"""
         return response
     else:
         return make_response(jsonify({'message': 'user not found'}), 404)
@@ -59,7 +59,7 @@ def logout():
     logout_user()
 
     response = jsonify({'message': 'Logout successful'})
-    response.delete_cookie('token')
+    """response.delete_cookie('token')"""
     return response
 
 
@@ -68,7 +68,6 @@ def auth_status():
     """ Checks the authentication status """
 
     if current_user.is_authenticated:
-        user_dict = current_user.to_dict()
-        user_dict['type'] = current_user.__class__.__name__
+        user_dict = current_user.to_dict() 
         return jsonify({'authenticated': True, 'user': user_dict})
     return jsonify({'authenticated': False})

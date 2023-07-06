@@ -35,7 +35,7 @@ class DBStorage:
         """ Initialization of engine """
 
         dialect = "mysql"
-        driver = "mysqldb"
+        driver = "pymysql"
         user = os.getenv("PRAC_MYSQL_USER", default="prac_dev")
         password = os.getenv("PRAC_MYSQL_PWD", default="prac_dev_pwd")
         host = os.getenv("PRAC_MYSQL_HOST", default="localhost")

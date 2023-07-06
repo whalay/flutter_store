@@ -3,7 +3,7 @@
 from flask import Blueprint
 
 
-auth = Blueprint('auth', __name__, url_prefix='/auth/')
+auth = Blueprint('auth', __name__, url_prefix='/api/auth/')
 
 
 from api.v1.auths.login import *

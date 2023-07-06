@@ -12,16 +12,17 @@ from flasgger import Swagger
 from flasgger.utils import swag_from
 
 app = Flask(__name__)
+CORS(app,
+     resources={r"/*": {"origins": "*"}},
+     supports_credentials=True,
+     expose_headers=['Access-Control-Allow-Credentials', 'Access-Control-Allow-Origin'],
+     allow_headers=['Content-Type', 'Authorization'])
 app.config['SECRET_KEY'] = 'thisthatthisthat'
 
 login_manager = LoginManager(app)
 
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
-cors = CORS(
-	app,
-	resources={r"/*": {"origins": "*"}},
-	supports_credentials=True)
 
 app.register_blueprint(app_views)
 app.register_blueprint(auth)
@@ -66,3 +67,4 @@ if __name__ == "__main__":
     if not port:
         port = '5000'
     app.run(host=host, port=port, threaded=True)
+

@@ -6,6 +6,7 @@ from models import storage
 from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
 from flask_login import current_user,  login_required
+from flask_cors import cross_origin
 
 @app_views.route('/stores', methods=['GET'], strict_slashes=False)
 @login_required
@@ -62,3 +63,17 @@ def post_userstore():
     instance = Store(**data, owner_id = current_user.id)
     instance.save()
     return make_response(jsonify(instance.to_dict()), 201)
+
+
+@app_views.route('/mystores', methods=['GET'], strict_slashes=False)
+@login_required
+def get_user_stores():
+    """
+    Retrieves the list of stores owned by the logged-in user
+    """
+    user_stores = current_user.stores
+    if not user_stores:
+        return make_response(jsonify({'message': 'User has no stores'}), 404)
+
+    list_stores = [store.to_dict() for store in user_stores]
+    return make_response(jsonify(list_stores), 200)
