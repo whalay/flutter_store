@@ -14,7 +14,7 @@ const Homepage = () => {
             <Link to="register">
               <button className='bg-blue-500 p-3 text-white text-2xl m-4'>Create a free Account </button>
             </Link>
-            <Link to="market">
+            <Link to="products">
               <button className='bg-blue-500 p-3 text-white text-2xl m-4'>Buy Now</button>
             </Link>
           </div>

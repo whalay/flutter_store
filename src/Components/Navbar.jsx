@@ -1,16 +1,18 @@
-import React from 'react'
-import { RxHamburgerMenu } from "react-icons/rx"
+import React, {useContext} from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext'
 import Hamburger from './Hamburger'
 
 const Navbar = () => {
+    const { isLoggedIn } = useContext(AuthContext);
+
     return (
         <div>
             <div className='flex justify-between p-10 text-2xl '>
-                <div  className='lg:hidden'>
+                <div className='lg:hidden'>
                     <Hamburger className='' />
                 </div>
-                <Link to='/market'>
+                <Link to='/'>
                     <h1 className='font-bold'>Flutterstore</h1>
                 </Link>
 
@@ -20,9 +22,13 @@ const Navbar = () => {
                     <li>Grow</li>
                     <li>Capital</li>
                 </ul>
-                <Link to='login'>
-                    <button className='bg-blue-500 p-1 px-5 text-white text-lg font-bold'>Login </button>
+                <Link to={`${isLoggedIn ? 'logout' : 'login' }`}>
+                {/* <Link to= 'login' > */}
+                    <button className='bg-blue-500 p-1 px-5 text-white text-lg font-bold'>{`${isLoggedIn ? 'Logout' : 'Login' }`} </button>
                 </Link>
+                {isLoggedIn && <Link to='dashboard'>
+                    <button className='bg-blue-500 p-1 px-5 text-white text-lg font-bold'>Dashboard </button>
+                </Link>}
             </div>
         </div>
     )

@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import axios from 'axios';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  
+  const { login } = useContext(AuthContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(email, password)
 
     // Perform login logic here, e.g. send a request to your Flask API
-
+    axios
+    .post(
+      'http://127.0.0.1:5000/api/auth/login',
+      { email, password },
+      { withCredentials: true }
+    )
+    .then((res) => {
+      const data = res.data;
+      console.log(res)
+      login(data.user);
+      navigate('/dashboard')
+    }).catch((err) => {
+      console.log('Error:', err);
+    });
     // Reset form fields
     setEmail('');
     setPassword('');

@@ -1,15 +1,15 @@
 import React from "react";
-import us from "../assets/us.png";
+import bag from "../assets/bag.jpg";
 import { Link } from "react-router-dom";
 
-const Card = ({ name, price, seller }) => {
+const Card = ({ id, name, price, seller }) => {
   return (
     <div className="flex  flex-col    items-center ">
       <div className="shadow-md  mb-5 ">
 
-        <Link to={`/${name}`}>
+        <Link to={`/products/${id}`}>
           <div className="h-52 w-72">
-            <img src={us} alt="logo" height="350" className="w-full h-full object-fill" />
+            <img src={bag} alt="logo" height="350" className="w-full h-full object-fill" />
           </div>
         </Link>
         <div className="p-5">
