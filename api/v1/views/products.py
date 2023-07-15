@@ -61,6 +61,8 @@ def get_product_by_products_category(category_id):
 
     return jsonify(matching_products), 200
 
+
+
 @app_views.route('/stores/<store_id>/products', methods=['POST'], strict_slashes=False)
 @login_required
 def add_product(store_id):
@@ -88,7 +90,8 @@ def add_product(store_id):
     return make_response(jsonify(instance.to_dict()), 201)
 
 
-@app_views.route('/stores/<store_id>/product/<product_id>', methods=['GET'])
+@app_views.route('/stores/<store_id>/product/<product_id>', methods=['GET'], strict_slashes=False)
+@login_required
 def get_product(store_id, product_id):
     store = storage.get(Store, store_id)
     if not store:
@@ -119,7 +122,50 @@ def get_product(store_id, product_id):
     return jsonify(response), 200
     #return jsonify(product.to_dict()), 200
 
-@app_views.route('/stores/<store_id>/products/', methods=['GET'])
+@app_views.route('/stores/<store_id>/product/<product_id>', methods=['PUT'], strict_slashes=False)
+@login_required
+def update_store_product(store_id, product_id):
+    """ Updates a product within a store """
+    store = storage.get(Store, store_id)
+    if not store:
+        return jsonify({'message': 'Store not found'}), 404
+
+    product = storage.get(Product, product_id)
+    if not product or product.store_id != store_id:
+        return jsonify({'message': 'Product not found'}), 404
+
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+
+    ignore = ['id']
+
+    data = request.get_json()
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(product, key, value)
+    storage.save()
+    return make_response(jsonify(product.to_dict()), 200)
+
+
+@app_views.route('/stores/<store_id>/product/<product_id>', methods=['DELETE'], strict_slashes=False)
+@login_required
+def delete_store_product(store_id, product_id):
+    """ Deletes a product within a store """
+    store = storage.get(Store, store_id)
+    if not store:
+        return jsonify({'message': 'Store not found'}), 404
+
+    product = storage.get(Product, product_id)
+    if not product or product.store_id != store_id:
+        return jsonify({'message': 'Product not found'}), 404
+
+    storage.delete(product)
+    storage.save()
+    return jsonify({'message': 'Product deleted'}), 200
+
+
+@app_views.route('/stores/<store_id>/products/', methods=['GET'], strict_slashes=False)
 @login_required
 def get_store_products(store_id):
     store = storage.get(Store, store_id)
